@@ -1,2 +1,3 @@
-# ryo-auth
-Roll Your Own Authentication
+# RYO-AUTH
+
+Roll Your Own Authentication base server
