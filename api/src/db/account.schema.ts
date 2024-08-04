@@ -7,13 +7,16 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Identity } from './identity.schema';
+import { AggregateRoot } from '@nestjs/cqrs';
 
 @Entity()
-export class Account {
+export class Account extends AggregateRoot {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @OneToMany(() => Identity, (identity) => identity.account)
+  @OneToMany(() => Identity, (identity) => identity.account, {
+    cascade: true,
+  })
   identities: Identity[];
 
   @Column({ nullable: false })
@@ -28,7 +31,7 @@ export class Account {
   @Column({ nullable: false })
   nickname: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   picture: string;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })

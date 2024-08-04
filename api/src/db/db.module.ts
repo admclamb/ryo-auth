@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountModule } from './account/account.module';
-import { DbModule } from './db/db.module';
-import schemas from './db';
+import schemas from '.';
 
 @Module({
   imports: [
@@ -24,8 +22,6 @@ import schemas from './db';
       }),
       inject: [ConfigService],
     }),
-    AccountModule,
-    DbModule,
   ],
 })
-export class AppModule {}
+export class DbModule {}

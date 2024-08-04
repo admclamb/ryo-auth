@@ -1,8 +1,9 @@
 import { Account } from './account.schema';
+import { Connection } from './connection.schema';
 import { Identity } from './identity.schema';
 
-const schemas = [Account, Identity];
+const schemas = [Account, Identity, Connection];
 
-export { Account, Identity };
+export { Account, Identity, Connection };
 
 export default schemas;
