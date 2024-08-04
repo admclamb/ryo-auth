@@ -11,7 +11,7 @@ import { AggregateRoot } from '@nestjs/cqrs';
 
 @Entity()
 export class Account extends AggregateRoot {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @OneToMany(() => Identity, (identity) => identity.account, {
@@ -19,7 +19,7 @@ export class Account extends AggregateRoot {
   })
   identities: Identity[];
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   email: string;
 
   @Column({ default: false })

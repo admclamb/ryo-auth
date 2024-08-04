@@ -9,6 +9,14 @@ export class AccountRepository {
     private readonly accountRepository: Repository<Account>,
   ) {}
 
+  findByEmail(email: string): Promise<Account | null> {
+    if (!email) {
+      return null;
+    }
+
+    return this.accountRepository.findOne({ where: { email } }) ?? null;
+  }
+
   create(
     createAccountRequest: CreateAccountRequest,
     connection: Connection,

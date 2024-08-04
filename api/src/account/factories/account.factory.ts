@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { EntityFactory } from 'src/common/factory/entity.factory';
 import { Account } from 'src/db';
 import { CreateAccountRequest } from '../dto/request/create-account-request.dto';
@@ -23,10 +27,18 @@ export class AccountFactory implements EntityFactory<Account> {
       );
     }
 
+    if (this.doesEmailExist(createAccountRequest.email)) {
+      throw new ConflictException('Account with that email already exists');
+    }
+
     const account = await this.accountRepository.create(
       createAccountRequest,
       foundConnection,
     );
     return account;
+  }
+
+  async doesEmailExist(email: string): Promise<boolean> {
+    return (await this.accountRepository.findByEmail(email)) ? true : false;
   }
 }
