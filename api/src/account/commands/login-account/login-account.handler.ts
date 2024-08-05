@@ -19,10 +19,6 @@ export class LoginAccountHandler
   async execute({
     loginAccountRequest,
   }: LoginAccountCommand): Promise<Account> {
-    loginAccountRequest.password = await this.passwordManager.hash(
-      loginAccountRequest.password,
-    );
-
     const account = this.eventPublisher.mergeObjectContext(
       await this.login(loginAccountRequest),
     );
@@ -35,7 +31,7 @@ export class LoginAccountHandler
   ): Promise<Account> {
     const account = await this.accountRepository.findByEmail(
       loginAccountRequest.email,
-      ['identities'],
+      ['identities', 'identities.connection'],
     );
 
     if (!Array.isArray(account?.identities)) {

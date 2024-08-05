@@ -28,7 +28,12 @@ export class AccountRepository {
   ): Promise<Account> {
     return this.accountRepository.save({
       ...createAccountRequest,
-      connection,
+      identities: [
+        {
+          connection: connection,
+          password: createAccountRequest.password,
+        },
+      ],
       name: createAccountRequest.email,
       email: createAccountRequest.email,
       nickname: createAccountRequest.email.split('@')[0] ?? '',
