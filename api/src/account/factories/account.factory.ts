@@ -27,7 +27,7 @@ export class AccountFactory implements EntityFactory<Account> {
       );
     }
 
-    if (this.doesEmailExist(createAccountRequest.email)) {
+    if (await this.doesEmailExist(createAccountRequest.email)) {
       throw new ConflictException('Account with that email already exists');
     }
 
@@ -38,7 +38,8 @@ export class AccountFactory implements EntityFactory<Account> {
     return account;
   }
 
-  async doesEmailExist(email: string): Promise<boolean> {
-    return (await this.accountRepository.findByEmail(email)) ? true : false;
+  private async doesEmailExist(email: string): Promise<boolean> {
+    const account = await this.accountRepository.findByEmail(email);
+    return account !== null;
   }
 }
