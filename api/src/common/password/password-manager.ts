@@ -13,6 +13,7 @@ export class PasswordManager {
   }
 
   public async isMatch(password: string, hash: string): Promise<boolean> {
+    console.log(password, hash);
     return await this.bcrypt.compare(password, hash);
   }
 }

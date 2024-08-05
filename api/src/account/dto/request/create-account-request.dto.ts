@@ -7,12 +7,15 @@ import {
 
 export class CreateAccountRequest {
   @IsString()
+  @IsNotEmpty()
   connection: string;
 
   @IsString()
+  @IsNotEmpty()
   username: string;
 
   @IsString()
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 
