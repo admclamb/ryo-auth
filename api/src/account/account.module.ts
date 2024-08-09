@@ -10,17 +10,21 @@ import * as bcrypt from 'bcrypt';
 import { PasswordManager } from 'src/common/password/password-manager';
 import { ConfigService } from '@nestjs/config';
 import { Bcrypt } from 'src/common/password/bcrypt.types';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from 'src/auth/local.strategy';
 
 @Module({
   imports: [
     CqrsModule,
     TypeOrmModule.forFeature([Account, Identity, Connection]),
+    PassportModule,
   ],
   controllers: [AccountController],
   providers: [
     ...AccountCommandHandlers,
     ...AccountFactories,
     ...AccountRepositories,
+    LocalStrategy,
     {
       provide: 'BCRYPT',
       useValue: bcrypt,
