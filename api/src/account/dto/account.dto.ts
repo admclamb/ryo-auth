@@ -3,7 +3,7 @@ import { IdentityDto } from './identity.dto';
 export interface AccountDto {
   id: string;
   email: string;
-  emailVerified: boolean;
+  isEmailVerified: boolean;
   identities: IdentityDto[];
   name: string;
   nickname: string;

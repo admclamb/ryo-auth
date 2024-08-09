@@ -7,6 +7,7 @@ import { EntityFactory } from 'src/common/factory/entity.factory';
 import { Account } from 'src/db';
 import { CreateAccountRequest } from '../dto/request/create-account-request.dto';
 import { AccountRepository, ConnectionRepository } from '../repositories';
+import { AccountDto } from '../dto/account.dto';
 
 @Injectable()
 export class AccountFactory implements EntityFactory<Account> {
@@ -14,6 +15,20 @@ export class AccountFactory implements EntityFactory<Account> {
     private readonly accountRepository: AccountRepository,
     private readonly connectionRepository: ConnectionRepository,
   ) {}
+
+  createDto(account: Account): AccountDto {
+    return {
+      id: account.id,
+      email: account.email,
+      isEmailVerified: account.isEmailVerified,
+      identities: [],
+      name: account.name,
+      nickname: account.nickname,
+      picture: account.picture,
+      createdAt: account.createdAt,
+      updatedAt: account.updatedAt,
+    };
+  }
 
   async create(createAccountRequest: CreateAccountRequest): Promise<Account> {
     const foundConnection =

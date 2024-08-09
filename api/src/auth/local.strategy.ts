@@ -17,8 +17,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
   async validate(loginAccountRequest: LoginAccountRequest): Promise<any> {
     const user = await this.commandBus.execute<LoginAccountCommand, Account>(
-      new LoginAccountCommand(loginAccountRequest);
-    )
+      new LoginAccountCommand(loginAccountRequest),
+    );
     if (!user) {
       throw new UnauthorizedException();
     }
