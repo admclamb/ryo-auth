@@ -1,7 +1,8 @@
 import { AccountFactory } from './account.factory';
+import { IdentityFactory } from './identity.factory';
 
-const AccountFactories = [AccountFactory];
+const AccountFactories = [AccountFactory, IdentityFactory];
 
-export { AccountFactory };
+export { AccountFactory, IdentityFactory };
 
 export default AccountFactories;

@@ -8,12 +8,14 @@ import { Account } from 'src/db';
 import { CreateAccountRequest } from '../dto/request/create-account-request.dto';
 import { AccountRepository, ConnectionRepository } from '../repositories';
 import { AccountDto } from '../dto/account.dto';
+import { IdentityFactory } from './identity.factory';
 
 @Injectable()
-export class AccountFactory implements EntityFactory<Account> {
+export class AccountFactory implements EntityFactory<Account, AccountDto> {
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly connectionRepository: ConnectionRepository,
+    private readonly identityFactory: IdentityFactory,
   ) {}
 
   createDto(account: Account): AccountDto {
@@ -21,7 +23,10 @@ export class AccountFactory implements EntityFactory<Account> {
       id: account.id,
       email: account.email,
       isEmailVerified: account.isEmailVerified,
-      identities: [],
+      identities:
+        account.identities?.map((identity) =>
+          this.identityFactory.createDto(identity),
+        ) ?? [],
       name: account.name,
       nickname: account.nickname,
       picture: account.picture,
