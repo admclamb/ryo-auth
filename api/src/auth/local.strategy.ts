@@ -3,18 +3,22 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoginAccountCommand } from 'src/account/commands/login-account/login-account.command';
-import { LoginAccountRequest } from 'src/account/dto/request/login-account-request.dto';
 import { Account } from 'src/db';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly commandBus: CommandBus) {
-    super();
+    super({
+      usernameField: 'email',
+    });
   }
 
-  async validate(loginAccountRequest: LoginAccountRequest): Promise<Account> {
+  async validate(email: string, password: string): Promise<Account> {
     const user = await this.commandBus.execute<LoginAccountCommand, Account>(
-      new LoginAccountCommand(loginAccountRequest),
+      new LoginAccountCommand({
+        email,
+        password,
+      }),
     );
 
     console.log('USER: ', user);

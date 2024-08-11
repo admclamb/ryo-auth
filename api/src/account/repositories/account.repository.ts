@@ -9,6 +9,16 @@ export class AccountRepository {
     private readonly accountRepository: Repository<Account>,
   ) {}
 
+  findByName(name: string, relations: string[] = []): Promise<Account | null> {
+    if (!name) {
+      return null;
+    }
+
+    return (
+      this.accountRepository.findOne({ where: { name }, relations }) ?? null
+    );
+  }
+
   findByEmail(
     email: string,
     relations: string[] = [],
