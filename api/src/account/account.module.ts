@@ -27,6 +27,7 @@ import { JwtService } from '@nestjs/jwt';
     ...AccountRepositories,
     LocalStrategy,
     JwtService,
+
     {
       provide: 'BCRYPT',
       useValue: bcrypt,

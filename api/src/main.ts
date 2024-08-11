@@ -5,6 +5,8 @@ import * as nocache from 'nocache';
 import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
+import fastifyCookie from '@fastify/cookie';
 
 function checkEnvironment(configService: ConfigService) {
   const requiredEnvVars = [
@@ -27,7 +29,7 @@ function checkEnvironment(configService: ConfigService) {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create(AppModule, new FastifyAdapter(), {
     logger: ['log'],
   });
 
@@ -51,6 +53,7 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT'],
     allowedHeaders: ['Authorization', 'Content-Type', 'content-type'],
     maxAge: 86400,
+    credentials: true,
   });
 
   app.use(

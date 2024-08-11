@@ -4,6 +4,7 @@ import {
   NotFoundException,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -13,7 +14,8 @@ import { CreateAccountCommand } from './commands/create-account/create-account.c
 import { AccountFactory } from './factories';
 import { AccountDto } from './dto/account.dto';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
-import { Token } from 'src/auth/token';
+import { FastifyReply } from 'fastify';
+import { CookieService } from 'src/auth/cookie.service';
 
 @Controller('v1/account')
 export class AccountController {
@@ -21,15 +23,32 @@ export class AccountController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly accountFactory: AccountFactory,
+    private readonly cookieService: CookieService,
   ) {}
 
   @Post()
-  createAccount(
+  async createAccount(
     @Body() createAccountRequest: CreateAccountRequest,
-  ): Promise<Token> {
-    return this.commandBus.execute<CreateAccountCommand, Token>(
-      new CreateAccountCommand(createAccountRequest),
+    @Res({ passthrough: true }) response: FastifyReply,
+  ): Promise<AccountDto> {
+    const accountWithToken = await this.commandBus.execute<
+      CreateAccountCommand,
+      {
+        account: Account;
+        accessToken: string;
+        refreshToken: string;
+      }
+    >(new CreateAccountCommand(createAccountRequest));
+
+    const account = this.accountFactory.createDto(accountWithToken.account);
+
+    this.cookieService.addAuthCookies(
+      response,
+      accountWithToken.accessToken,
+      accountWithToken.refreshToken,
     );
+
+    return account;
   }
 
   @UseGuards(LocalAuthGuard)
