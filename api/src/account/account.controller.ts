@@ -13,6 +13,7 @@ import { CreateAccountCommand } from './commands/create-account/create-account.c
 import { AccountFactory } from './factories';
 import { AccountDto } from './dto/account.dto';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
+import { Token } from 'src/auth/token';
 
 @Controller('v1/account')
 export class AccountController {
@@ -25,8 +26,8 @@ export class AccountController {
   @Post()
   createAccount(
     @Body() createAccountRequest: CreateAccountRequest,
-  ): Promise<Account> {
-    return this.commandBus.execute<CreateAccountCommand, Account>(
+  ): Promise<Token> {
+    return this.commandBus.execute<CreateAccountCommand, Token>(
       new CreateAccountCommand(createAccountRequest),
     );
   }

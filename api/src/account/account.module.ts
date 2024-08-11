@@ -12,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import { Bcrypt } from 'src/common/password/bcrypt.types';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from 'src/auth/local.strategy';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { LocalStrategy } from 'src/auth/local.strategy';
     ...AccountFactories,
     ...AccountRepositories,
     LocalStrategy,
+    JwtService,
     {
       provide: 'BCRYPT',
       useValue: bcrypt,
@@ -32,8 +34,8 @@ import { LocalStrategy } from 'src/auth/local.strategy';
     {
       provide: PasswordManager,
       useFactory: (bcrypt: Bcrypt, configService: ConfigService) => {
-        const salt = configService.get<string>('BCRYPT_SALT');
-        return new PasswordManager(bcrypt, Number(salt));
+        const SALT_ROUNDS = configService.get<string>('BCRYPT_SALT_ROUNDS');
+        return new PasswordManager(bcrypt, Number(SALT_ROUNDS));
       },
       inject: ['BCRYPT', ConfigService],
     },

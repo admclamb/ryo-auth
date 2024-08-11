@@ -5,6 +5,8 @@ import { PasswordManager } from 'src/common/password/password-manager';
 import { AccountRepository } from 'src/account/repositories';
 import { NotFoundException } from '@nestjs/common';
 import { LoginAccountRequest } from 'src/account/dto/request/login-account-request.dto';
+import { JwtService } from '@nestjs/jwt';
+import { Token } from 'src/auth/token';
 
 @CommandHandler(LoginAccountCommand)
 export class LoginAccountHandler
@@ -14,16 +16,15 @@ export class LoginAccountHandler
     private readonly eventPublisher: EventPublisher,
     private readonly accountRepository: AccountRepository,
     private readonly passwordManager: PasswordManager,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async execute({
-    loginAccountRequest,
-  }: LoginAccountCommand): Promise<Account> {
+  async execute({ loginAccountRequest }: LoginAccountCommand): Promise<Token> {
     const account = this.eventPublisher.mergeObjectContext(
       await this.login(loginAccountRequest),
     );
 
-    return account;
+    return this.createToken(account);
   }
 
   private async login(
@@ -48,6 +49,17 @@ export class LoginAccountHandler
     }
 
     return account;
+  }
+
+  private createToken(account: Account): Token {
+    const payload = {
+      name: account.name,
+      sub: account.id,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 
   private findIdentityForPassword(account: Account): Identity {
