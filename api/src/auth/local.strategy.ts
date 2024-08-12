@@ -13,19 +13,31 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(email: string, password: string): Promise<Account> {
-    const user = await this.commandBus.execute<LoginAccountCommand, Account>(
+  async validate(
+    email: string,
+    password: string,
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    account: Account;
+  }> {
+    const accountWithToken = await this.commandBus.execute<
+      LoginAccountCommand,
+      {
+        accessToken: string;
+        refreshToken: string;
+        account: Account;
+      }
+    >(
       new LoginAccountCommand({
         email,
         password,
       }),
     );
 
-    console.log('USER: ', user);
-
-    if (!user) {
+    if (!accountWithToken || !accountWithToken?.account) {
       throw new UnauthorizedException();
     }
-    return user;
+    return accountWithToken;
   }
 }

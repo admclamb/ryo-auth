@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { FastifyReply } from 'fastify';
-import { CookieSerializeOptions } from '@fastify/cookie';
+import { Response } from 'express';
 
 @Injectable()
 export class CookieService {
-  constructor(private readonly cookieConfig: CookieSerializeOptions) {}
+  constructor(private readonly cookieConfig) {}
 
   public addAuthCookies(
-    response: FastifyReply,
+    response: Response,
     accessToken: string,
     refreshToken: string,
   ): void {
@@ -15,7 +14,7 @@ export class CookieService {
     response.cookie('rid', refreshToken, this.cookieConfig);
   }
 
-  public clearAuthCookies(response: FastifyReply): void {
+  public clearAuthCookies(response: Response): void {
     response.clearCookie('id', this.cookieConfig);
     response.clearCookie('rid', this.cookieConfig);
   }

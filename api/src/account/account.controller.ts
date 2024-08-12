@@ -14,8 +14,8 @@ import { CreateAccountCommand } from './commands/create-account/create-account.c
 import { AccountFactory } from './factories';
 import { AccountDto } from './dto/account.dto';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
-import { FastifyReply } from 'fastify';
 import { CookieService } from 'src/auth/cookie.service';
+import { Response } from 'express';
 
 @Controller('v1/account')
 export class AccountController {
@@ -29,7 +29,7 @@ export class AccountController {
   @Post()
   async createAccount(
     @Body() createAccountRequest: CreateAccountRequest,
-    @Res({ passthrough: true }) response: FastifyReply,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<AccountDto> {
     const accountWithToken = await this.commandBus.execute<
       CreateAccountCommand,
@@ -53,10 +53,22 @@ export class AccountController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  signIn(@Req() req): AccountDto {
-    if (!req.user) {
-      throw new NotFoundException();
+  signIn(
+    @Req() req,
+    @Res({ passthrough: true }) response: Response,
+  ): AccountDto {
+    if (!req?.user || !req?.user.account) {
+      throw new NotFoundException('Error');
     }
-    return this.accountFactory.createDto(req.user);
+
+    const account = this.accountFactory.createDto(req?.user.account);
+
+    this.cookieService.addAuthCookies(
+      response,
+      req?.user.accessToken,
+      req?.user.refreshToken,
+    );
+
+    return account;
   }
 }

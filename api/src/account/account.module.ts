@@ -13,6 +13,7 @@ import { Bcrypt } from 'src/common/password/bcrypt.types';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from 'src/auth/local.strategy';
 import { JwtService } from '@nestjs/jwt';
+import { CookieService } from 'src/auth/cookie.service';
 
 @Module({
   imports: [
@@ -31,6 +32,23 @@ import { JwtService } from '@nestjs/jwt';
     {
       provide: 'BCRYPT',
       useValue: bcrypt,
+    },
+    {
+      provide: CookieService,
+      useFactory: (configService: ConfigService) => {
+        const IS_PRODUCTION: boolean =
+          configService.get<string>('NODE_ENV') === 'production';
+        const DOMAIN: string = configService.get<string>('DOMAIN');
+        return new CookieService({
+          httpOnly: true,
+          secure: IS_PRODUCTION,
+          sameSite: 'lax',
+          path: '/',
+          domain: IS_PRODUCTION ? DOMAIN : '',
+          maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
+        });
+      },
+      inject: [ConfigService],
     },
     {
       provide: PasswordManager,

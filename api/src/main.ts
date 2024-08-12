@@ -5,8 +5,7 @@ import * as nocache from 'nocache';
 import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
-import fastifyCookie from '@fastify/cookie';
+import * as cookieParser from 'cookie-parser';
 
 function checkEnvironment(configService: ConfigService) {
   const requiredEnvVars = [
@@ -29,7 +28,7 @@ function checkEnvironment(configService: ConfigService) {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, new FastifyAdapter(), {
+  const app = await NestFactory.create(AppModule, {
     logger: ['log'],
   });
 
@@ -47,6 +46,8 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   app.use(nocache());
+
+  app.use(cookieParser());
 
   app.enableCors({
     origin: configService.get<string>('CLIENT_ORIGIN_URL'),
