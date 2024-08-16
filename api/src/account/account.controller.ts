@@ -16,6 +16,7 @@ import { AccountDto } from './dto/account.dto';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { CookieService } from 'src/auth/cookie.service';
 import { Response } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('v1/account')
 export class AccountController {
@@ -68,6 +69,14 @@ export class AccountController {
       req?.user.accessToken,
       req?.user.refreshToken,
     );
+
+    return account;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('login/token')
+  async loginWithToken(@Req() req) {
+    const account = this.accountFactory.createDto(req?.user.account);
 
     return account;
   }

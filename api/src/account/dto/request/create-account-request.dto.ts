@@ -12,10 +12,6 @@ export class CreateAccountRequest {
 
   @IsString()
   @IsNotEmpty()
-  username: string;
-
-  @IsString()
-  @IsNotEmpty()
   @IsEmail()
   email: string;
 
