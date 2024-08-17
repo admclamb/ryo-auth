@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   NotFoundException,
   Post,
   Req,
@@ -74,8 +75,15 @@ export class AccountController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('login/token')
-  async loginWithToken(@Req() req) {
+  @Get('access-token')
+  async getAccessToken(@Req() req) {
+    console.log(req);
+    return null;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getProfile(@Req() req) {
     const account = this.accountFactory.createDto(req?.user.account);
 
     return account;
