@@ -18,6 +18,7 @@ function checkEnvironment(configService: ConfigService) {
     'POSTGRESQL_NAME',
     'SYNCHRONIZE_DATABASE',
     'BCRYPT_SALT_ROUNDS',
+    'JWT_SECRET',
   ];
 
   requiredEnvVars.forEach((envVar) => {

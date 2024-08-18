@@ -6,16 +6,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account, Connection, Identity } from 'src/db';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    PassportModule,
+    PassportModule.register({
+      session: false,
+    }),
     CqrsModule,
     TypeOrmModule.forFeature([Account, Identity, Connection]),
-    JwtModule.register({
-      secret: 'my-secret',
-      signOptions: { expiresIn: '60s' },
-    }),
+    JwtModule,
   ],
   providers: [LocalStrategy, JwtStrategy],
 })

@@ -77,13 +77,15 @@ export class AccountController {
   @UseGuards(JwtAuthGuard)
   @Get('access-token')
   async getAccessToken(@Req() req) {
-    console.log(req);
-    return null;
+    return {
+      accessToken: req.cookies.id,
+    };
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Req() req) {
+    console.log(req?.user);
     const account = this.accountFactory.createDto(req?.user.account);
 
     return account;

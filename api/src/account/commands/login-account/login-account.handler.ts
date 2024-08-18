@@ -32,11 +32,11 @@ export class LoginAccountHandler
     return {
       account,
       accessToken: this.createToken(account, {
-        secret: this.configService.get<string>('ACCESS_TOKEN_SECRET'),
+        secret: this.configService.get<string>('JWT_SECRET'),
         expiresIn: '30d',
       }),
       refreshToken: this.createToken(account, {
-        secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
+        secret: this.configService.get<string>('JWT_SECRET'),
         expiresIn: '15min',
       }),
     };
@@ -71,7 +71,7 @@ export class LoginAccountHandler
     signOptions: JwtSignOptions = {},
   ): string {
     const payload = {
-      name: account.name,
+      username: account.name,
       sub: account.id,
     };
 

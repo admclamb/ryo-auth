@@ -19,7 +19,6 @@ import { CookieService } from 'src/auth/cookie.service';
   imports: [
     CqrsModule,
     TypeOrmModule.forFeature([Account, Identity, Connection]),
-    PassportModule,
   ],
   controllers: [AccountController],
   providers: [
